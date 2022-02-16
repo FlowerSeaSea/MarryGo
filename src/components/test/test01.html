@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function jsonp(url,options){
+            var script =document.createElement('script')
+            var a=url.indexOf('?')>-1 ? '&' : '?'
+            url+=a+'_='+Date.now()
+            // 将参数拼接到url上
+            for(var i in options){
+                url += '&'+i+'='+options[i]
+            }
+            script.src=url
+            document.body.appendChild(script)
+        }
+
+
+        function tree (data){
+            let parents = data.filter(value=>value.pid=='undefined'||value.pid==null)
+            let children = data.filter(value=>value.pid=='undefined'&&value.pid!=null)
+            let dataTree = (parents,children){
+                parents.forEach((parent)=>{
+                    children.forEach((cur,index)=>{
+                        if(cur.pid===parent.pid){
+                        }
+                    })
+                })
+            }
+        }
+    </script>
+</body>
+</html>

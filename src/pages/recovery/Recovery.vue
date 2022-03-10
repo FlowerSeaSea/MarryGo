@@ -1,5 +1,8 @@
 <template>
-  <h1>mine</h1>
+<div>
+<header></header>
+<router-view></router-view>
+</div>
 </template>
 
 <script>
@@ -8,6 +11,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

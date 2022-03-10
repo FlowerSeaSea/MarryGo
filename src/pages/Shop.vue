@@ -1,14 +1,10 @@
 <template>
-  <div>
+  <div id="root">
     <header>
       <navbar></navbar>
     </header>
     <section>
-      <van-swipe :autoplay="3000">
-        <van-swipe-item v-for="(item, index) in imgUrl" :key="index">
-          <img :src="item" :alt="index" />
-        </van-swipe-item>
-      </van-swipe>
+      <swiper :autoplay="3000" :imgUrl="this.imgUrl"/>
       <div class="contant clearfix">
         <h2>第一栏</h2>
         <div class="left"></div>
@@ -52,16 +48,18 @@
 </template>
 
 <script>
-import Navbar from "../components/Navbar.vue";
+import Navbar from "@/components/Navbar.vue";
+import Swiper from "@/components/Swiper.vue"
 export default {
-  components: { Navbar },
+  components: { Navbar , Swiper},
   data() {
     return {
       imgUrl: [
-        require("../assets/image/swiper01.png"),
-        require("../assets/image/swiper02.png"),
-        require("../assets/image/swiper03.png"),
-        require("../assets/image/swiper04.png"),
+        require("@/assets/image/swiper01.png"),
+        require("@/assets/image/swiper02.png"),
+        require("@/assets/image/swiper01.png"),
+        require("@/assets/image/swiper03.png"),
+        require("@/assets/image/swiper04.png"),
       ],
       active: 1,
       list: [],
@@ -101,31 +99,10 @@ export default {
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-}
-header,
-section,
-footer {
-  width: 100%;
-  margin: 0 auto;
-  background-color: green;
-}
-section {
-  margin: 10px auto;
-  padding: 15px 10px;
-  border-radius: 20px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-footer {
-  height: 100px;
-}
 .van-swipe-item {
   position: relative;
   height: 150px;
-  width: 100%;
+  width: 100vw;
   text-align: center;
   background-color: #39a9ed;
 }
@@ -136,11 +113,6 @@ footer {
 .contant {
   padding: 15px 0;
   width: 100%;
-}
-.clearfix::after {
-  content: "";
-  display: block;
-  clear: both;
 }
 .left {
   float: left;

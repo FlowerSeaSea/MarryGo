@@ -1,32 +1,34 @@
 <template>
   <div id="app">
     <keep-alive>
-      <router-view/>
+      <router-view v-if="$route.meta.keepAlive"/>
     </keep-alive>
-    <tabbar v-if="tabShow"/>
+    <router-view v-if="!$route.meta.keepAlive"/>
   </div>
 </template>
 
 <script>
-import Tabbar from './components/Tabbar.vue';
 
 export default {
   components: {
-    Tabbar
   },
   data(){
     return{
-      tabShow:true
+      tabShow:false
     }
   },
+  created(){
+    this.$store.commit('initUser')
+  },
   watch:{
-    $route() {
-      if (this.$route.path=='/detaile') {
-        this.tabShow=false
-      }else{
-        this.tabShow=true
-      }
-    },
+    // $route() {
+    //   if (this.$route.path=='/detaile' && this.$route.path=='/cart') {
+    //     console.log(this.$route.path);
+    //     this.tabShow=false
+    //   }else{
+    //     this.tabShow=true
+    //   }
+    // },
   }
 }
 </script>

@@ -1,32 +1,39 @@
 * {
-    margin: 0;
-    padding: 0;
-  }
+  margin: 0;
+  padding: 0;
+}
 #app {
   width: 100vw;
   overflow: hidden;
 }
-  header,
-  section,
-  footer {
-    margin: 0 auto;
-    width: 100vw;
-    background: #ff5470;
-  }
-  header{
-    height: 54px;
-  }
-  section {
-    padding: 15px 10px;
-    border-radius: 20px;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-  footer {
-    height: 100px;
-  }
-  .clearfix::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
+.icon {
+  width: 2em;
+  height: 2em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+header,
+section,
+footer {
+  margin: 0 auto;
+  width: 100vw;
+  background: #ff5470;
+}
+header {
+  height: 54px;
+}
+section {
+  padding: 15px 10px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+footer {
+  height: 100px;
+}
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}

@@ -1,152 +1,87 @@
 <template>
-  <van-form>
-    <van-field
-      v-model="childValue.userTel"
-      clearable
-      type="tel"
-      name="userTel"
-      label="手机号"
-      placeholder="手机号"
-      :rules="[{ required: true, message: '手机号不能为空' }]"
-    />
-    <van-field
-      v-model="childValue.sms"
-      center
-      clearable
-      label="短信验证码"
-      placeholder="请输入短信验证码"
-    >
-      <template #button>
-        <van-button
-          size="small"
-          color="#7232dd"
-          :disabled="disabled"
-          native-type="button"
-          @click="sendCode"
-          >{{ codemsg }}
-        </van-button>
-      </template>
-    </van-field>
-
-    <van-field
-      v-model="childValue.userPwd"
-      clearable
-      :type="!passwordStatus ? 'password' : 'number'"
-      name="userPwd"
-      label="密码"
-      :right-icon="!passwordStatus ? 'closed-eye' : 'eye-o'"
-      placeholder="请设置密码"
-      @click-right-icon="passwordStatus = !passwordStatus"
-      :rules="[{ required: true, message: '请填设置密码' }]"
-    />
-    <div style="margin: 16px">
-      <van-button
-        round
-        block
-        type="info"
-        native-type="button"
-        @click="registerClick"
-        >注册</van-button
-      >
-    </div>
-  </van-form>
+  <div>
+    <header>
+      <navbar/>
+    </header>
+    <section>
+      <van-form @submit="onSubmit" @failed="onFailed">
+        <van-field
+          v-model="userPwd"
+          clearable
+          :type="!passwordStatus ? 'password' : 'number'"
+          name="userPwd"
+          label="新密码"
+          :right-icon="!passwordStatus ? 'closed-eye' : 'eye-o'"
+          placeholder="请设置新密码"
+          @click-right-icon="passwordStatus = !passwordStatus"
+          :rules="[{ required: true, message: '密码不能为空' }]"
+        />
+        <div style="margin: 16px">
+          <van-button
+            round
+            block
+            type="info"
+            native-type="submit"
+            >确认</van-button
+          >
+        </div>
+      </van-form>
+    </section>
+  </div>
 </template>
 
 <script>
 import { Toast } from "vant";
 import http from "@/common/api/request.js";
+import navbar from "@/components/Navbar";
 
 export default {
+  components:{navbar},
   data() {
     return {
-      disabled: false,
+      userPwd: "",
       passwordStatus: false,
-      childValue: {
-        userTel: "",
-        sms: "",
-        userPwd: "",
-      },
       rules: {
-        userTel: {
-          rule: /^1[23456789]\d{9}$/,
-          msg: "请输入正确手机号",
-        },
         userPwd: {
           rule: /^\w{6,15}$/,
-          msg: "密码格式错误，要求6-12位",
+          msg: "密码格式错误，要求6-15位",
         },
       },
-      codenum: 6,
-      codemsg: "获取验证码",
-      code: "",
     };
   },
   methods: {
-    sendCode() {
-      if (!this.validator("userTel")) return;
-
-      // 请求短信接口
-      http
-        .$axios({
-          url: "/api/code",
-          method: "POST",
-          data: {
-            phone: this.childValue.userTel,
-          },
-        })
-        .then((res) => {
-          if (res.success) {
-            this.code = res.data;
-          }
-        });
-      //   禁用按钮
-      this.disabled = true;
-      //   倒计时
-      let timer = setInterval(() => {
-        console.log(this.codenum);
-        --this.codenum;
-        this.codemsg = `重新发送${this.codenum}s`;
-      }, 1000);
-      // 恢复按钮
-      setTimeout(() => {
-        clearInterval(timer);
-        this.codenum = 6;
-        this.codemsg = "获取验证码";
-        this.disabled = false;
-      }, 6000);
-    },
-
-    registerClick() {
-      // 验证码和密码都正确
+    onSubmit() {
       if (!this.validator("userPwd")) return;
-
-      if (this.code != this.childValue.sms) {
-        Toast("验证码错误");
-        return;
-      }
       http
         .$axios({
-          url: "/api/register",
+          url: "/api/recovery",
           method: "POST",
           data: {
-            phone: this.childValue.userTel,
-            pwd: this.childValue.userPwd,
+            phone: this.$route.params.phone,
+            pwd: this.userPwd,
           },
         })
         .then((res) => {
           if (!res.success) return;
-          console.log(res);
+          Toast(res.msg);
+          this.$router.push({
+            path: "/login",
+          });
         });
     },
 
     validator(val) {
       let bool = true;
-      if (!this.rules[val].rule.test(this.childValue[val])) {
+      if (!this.rules[val].rule.test(this[val])) {
         Toast.fail(this.rules[val].msg);
         bool = false;
         return false;
       }
       return bool;
+    },
+
+    onFailed(errorInfo) {
+      console.log("failed", errorInfo);
     },
   },
 };

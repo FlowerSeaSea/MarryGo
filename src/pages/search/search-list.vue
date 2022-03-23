@@ -2,29 +2,28 @@
   <div>
     <header>
       <SearchHeader />
-      <van-sticky>
-        <van-dropdown-menu>
-          <van-dropdown-item
-            v-model="value1"
-            :options="option1"
-            @change="change1"
-          />
-          <van-dropdown-item
-            v-model="value2"
-            :options="option2"
-            @change="change2"
-          />
-        </van-dropdown-menu>
-      </van-sticky>
     </header>
-    <section>
+    <van-sticky>
+      <van-dropdown-menu>
+        <van-dropdown-item
+          v-model="value1"
+          :options="option1"
+          @change="change1"
+        />
+        <van-dropdown-item
+          v-model="value2"
+          :options="option2"
+          @change="change2"
+        />
+      </van-dropdown-menu>
+    </van-sticky>
+    <section v-if="goodsList.length">
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list
           v-model="loading"
           :finished="finished"
           finished-text="没有更多了"
           @load="onLoad"
-          v-if="goodsList.length"
         >
           <ul class="goodList">
             <li v-for="(item, index) in goodsList" :key="index" class="goods">
@@ -46,8 +45,10 @@
             </li>
           </ul>
         </van-list>
-        <h4 v-else>没有找到此类信息。。。</h4>
       </van-pull-refresh>
+    </section>
+    <section v-else>
+      <h4>没有找到此类信息。。。</h4>
     </section>
     <footer></footer>
   </div>
@@ -142,7 +143,6 @@ export default {
       this.onLoad();
     },
     goDetaile(id) {
-      console.log(this.$router);
       this.$router.push({
         path: "/detaile",
         name: "shopDetaile",

@@ -4,7 +4,7 @@
       <navbar></navbar>
     </header>
     <section>
-      <swiper :autoplay="3000" :imgUrl="this.imgUrl"/>
+      <swiper :autoplay="3000" :imgUrl="this.imgUrl" />
       <div class="contant clearfix">
         <h2>第一栏</h2>
         <div class="left"></div>
@@ -44,14 +44,20 @@
       </div>
     </section>
     <footer></footer>
+    <Tabbar />
   </div>
 </template>
 
 <script>
 import Navbar from "@/components/Navbar.vue";
-import Swiper from "@/components/Swiper.vue"
+import Swiper from "@/components/Swiper.vue";
+import Tabbar from "@/components/Tabbar.vue";
 export default {
-  components: { Navbar , Swiper},
+  components: {
+    Tabbar,
+    Navbar,
+    Swiper,
+  },
   data() {
     return {
       imgUrl: [

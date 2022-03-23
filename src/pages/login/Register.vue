@@ -1,63 +1,68 @@
 <template>
-  <van-form>
-    <van-field
-      v-model="childValue.userTel"
-      clearable
-      type="tel"
-      name="userTel"
-      label="手机号"
-      placeholder="手机号"
-      :rules="[{ required: true, message: '手机号不能为空' }]"
-    />
-    <van-field
-      v-model="childValue.sms"
-      center
-      clearable
-      label="短信验证码"
-      placeholder="请输入短信验证码"
-    >
-      <template #button>
-        <van-button
-          size="small"
-          color="#7232dd"
-          :disabled="disabled"
-          native-type="button"
-          @click="sendCode"
-          >{{ codemsg }}
-        </van-button>
-      </template>
-    </van-field>
+  <div>
+    <header>
+      <navbar />
+    </header>
+    <section>
+      <van-form @submit="onSubmit" @failed="onFailed">
+        <van-field
+          v-model="childValue.userTel"
+          clearable
+          type="tel"
+          name="userTel"
+          label="手机号"
+          placeholder="手机号"
+          :rules="[{ required: true, message: '手机号不能为空' }]"
+        />
+        <van-field
+          v-model="childValue.sms"
+          center
+          clearable
+          label="短信验证码"
+          placeholder="请输入短信验证码"
+          :rules="[{ required: true, message: '验证码不能为空' }]"
+        >
+          <template #button>
+            <van-button
+              size="small"
+              color="#7232dd"
+              :disabled="disabled"
+              native-type="button"
+              @click="sendCode"
+              >{{ codemsg }}
+            </van-button>
+          </template>
+        </van-field>
 
-    <van-field
-      v-model="childValue.userPwd"
-      clearable
-      :type="!passwordStatus ? 'password' : 'number'"
-      name="userPwd"
-      label="密码"
-      :right-icon="!passwordStatus ? 'closed-eye' : 'eye-o'"
-      placeholder="请设置密码"
-      @click-right-icon="passwordStatus = !passwordStatus"
-      :rules="[{ required: true, message: '请填设置密码' }]"
-    />
-    <div style="margin: 16px">
-      <van-button
-        round
-        block
-        type="info"
-        native-type="button"
-        @click="registerClick"
-        >注册</van-button
-      >
-    </div>
-  </van-form>
+        <van-field
+          v-model="childValue.userPwd"
+          clearable
+          :type="!passwordStatus ? 'password' : 'number'"
+          name="userPwd"
+          label="密码"
+          :right-icon="!passwordStatus ? 'closed-eye' : 'eye-o'"
+          placeholder="请设置密码"
+          @click-right-icon="passwordStatus = !passwordStatus"
+          :rules="[{ required: true, message: '密码不能为空' }]"
+        />
+        <div style="margin: 16px">
+          <van-button round block type="info" native-type="submit"
+            >注册</van-button
+          >
+        </div>
+      </van-form>
+    </section>
+  </div>
 </template>
 
 <script>
 import { Toast } from "vant";
 import http from "@/common/api/request.js";
+import navbar from "@/components/Navbar";
 
 export default {
   name: "Register",
+  components: { navbar },
   data() {
     return {
       disabled: false,
@@ -74,7 +79,7 @@ export default {
         },
         userPwd: {
           rule: /^\w{6,15}$/,
-          msg: "密码格式错误，要求6-12位",
+          msg: "密码格式错误，要求6-15位",
         },
       },
       codenum: 6,
@@ -117,7 +122,7 @@ export default {
       }, 6000);
     },
 
-    registerClick() {
+    onSubmit() {
       // 验证码和密码都正确
       if (!this.validator("userPwd")) return;
 
@@ -136,8 +141,10 @@ export default {
         })
         .then((res) => {
           if (!res.success) return;
-          Toast(res.msg)
-          console.log(res);
+          Toast(res.msg);
+          this.$router.push({
+            name: "Home",
+          });
         });
     },
 
@@ -149,6 +156,10 @@ export default {
         return false;
       }
       return bool;
+    },
+
+    onFailed(errorInfo) {
+      console.log("failed", errorInfo);
     },
   },
 };

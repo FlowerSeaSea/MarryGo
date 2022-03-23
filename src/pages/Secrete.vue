@@ -1,5 +1,6 @@
 <template>
-  <van-tabs swipeable sticky @click="onClick">
+<div>
+    <van-tabs swipeable sticky @click="onClick">
     <van-tab
       v-for="(item, index) in messagesTitle"
       :title="item.title"
@@ -13,11 +14,18 @@
       </ul>
     </van-tab>
   </van-tabs>
+  <Tabbar/>
+</div>
+
 </template>
 
 <script>
 import http from "@/common/api/request.js";
+import Tabbar from '@/components/Tabbar.vue';
 export default {
+  components:{
+    Tabbar
+  },
   data() {
     return {
       messagesTitle: [],

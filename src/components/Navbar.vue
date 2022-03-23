@@ -8,7 +8,7 @@
     <slot slot="title" name="title"></slot>
     <slot slot="right" name="right">
       <div class="header-returnHome">
-        <van-icon name="arrow" @click="goHome" />
+        <van-icon name="wap-home-o" @click="goHome" />
       </div>
     </slot>
   </van-nav-bar>
@@ -18,8 +18,12 @@
 export default {
   name: "Navbar",
   methods:{
-    goBack(){},
-    goHome(){}
+    goBack(){
+      this.$router.back()
+    },
+    goHome(){
+      this.$router.push('/home')
+    }
   }
 };
 </script>

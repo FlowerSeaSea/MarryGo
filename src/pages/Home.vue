@@ -116,12 +116,17 @@
         </van-grid-item>
       </van-grid>
     </section>
+    <Tabbar/>
   </div>
 </template>
 
 <script>
 import { areaList } from "@vant/area-data";
+import Tabbar from '@/components/Tabbar.vue';
 export default {
+  components:{
+    Tabbar
+  },
   data() {
     return {
       areaList,
@@ -194,13 +199,6 @@ export default {
 </script>
 
 <style lang="scss">
-.icon {
-  width: 2em;
-  height: 2em;
-  vertical-align: -0.15em;
-  fill: currentColor;
-  overflow: hidden;
-}
 .first {
   span {
     font-size: 13px;

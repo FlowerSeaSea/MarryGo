@@ -1,52 +1,62 @@
 <template>
-  <van-form>
-    <van-field
-      v-model="userTel"
-      clearable
-      type="tel"
-      name="userTel"
-      label="手机号"
-      placeholder="手机号"
-      :rules="[{ required: true, message: '手机号不能为空' }]"
-    />
-    <van-field
-      v-model="sms"
-      center
-      clearable
-      label="短信验证码"
-      placeholder="请输入短信验证码"
-    >
-      <template #button>
-        <van-button
-          size="small"
-          color="#7232dd"
-          :disabled="disabled"
-          native-type="button"
-          @click="sendCode"
-          >{{ codemsg }}
-        </van-button>
-      </template>
-    </van-field>
-    <div style="margin: 16px">
-      <van-button round block type="info" native-type="button" @click="next"
-        >下一步</van-button
-      >
-    </div>
-  </van-form>
+  <div>
+    <header>
+      <navbar />
+    </header>
+    <section>
+      <van-form @submit="onSubmit" @failed="onFailed">
+        <van-field
+          v-model="userTel"
+          clearable
+          type="tel"
+          name="userTel"
+          label="手机号"
+          placeholder="手机号"
+          :rules="[{ required: true, message: '手机号不能为空' }]"
+        />
+        <van-field
+          v-model="sms"
+          center
+          clearable
+          label="短信验证码"
+          placeholder="请输入短信验证码"
+          :rules="[{ required: true, message: '验证码不能为空' }]"
+        >
+          <template #button>
+            <van-button
+              size="small"
+              color="#7232dd"
+              :disabled="disabled"
+              native-type="button"
+              @click="sendCode"
+              >{{ codemsg }}
+            </van-button>
+          </template>
+        </van-field>
+        <div style="margin: 16px">
+          <van-button round block type="info" native-type="submit"
+            >下一步</van-button
+          >
+        </div>
+      </van-form>
+    </section>
+  </div>
 </template>
 
 <script>
 import { Toast } from "vant";
 import http from "@/common/api/request.js";
+import navbar from "@/components/Navbar";
 
 export default {
   name: "CodeLogin",
+  components: { navbar },
   data() {
     return {
       disabled: false,
       userTel: "",
       code: "",
-      sms:'',
+      sms: "",
       rules: {
         userTel: {
           rule: /^1[23456789]\d{9}$/,
@@ -91,8 +101,8 @@ export default {
       }, 6000);
     },
 
-    next() {
-      if (this.code == this.sms) {
+    onSubmit() {
+      if (this.code != this.sms) {
         Toast("验证码错误");
         return;
       }
@@ -107,12 +117,15 @@ export default {
         })
         .then((res) => {
           if (!res.success) {
-              Toast(res.msg)
-              return
+            Toast(res.msg);
+            return;
           }
           this.$router.push({
-              name:'btn'
-          })
+            name: "btn",
+            params: {
+              phone: this.userTel,
+            },
+          });
         });
     },
 
@@ -124,6 +137,10 @@ export default {
         return false;
       }
       return bool;
+    },
+
+    onFailed(errorInfo) {
+      console.log("failed", errorInfo);
     },
   },
 };

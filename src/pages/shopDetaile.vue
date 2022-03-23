@@ -28,6 +28,7 @@
         <van-goods-action-icon
           icon="cart-o"
           text="购物车"
+          @click="addCart"
         />
         <van-goods-action-icon icon="shop-o" text="店铺" />
         <van-goods-action-button
@@ -43,6 +44,7 @@
 import Swiper from "@/components/Swiper.vue";
 import BetterScroll from "better-scroll";
 import http from '@/common/api/request.js'
+import { Toast } from 'vant';
 export default {
   components: {
     Swiper,
@@ -77,6 +79,24 @@ export default {
         }
       })
       console.log(res);
+    },
+
+    addCart(){
+      let id=this.$route.query.id
+      http.$axios({
+        url:'/api/addCart',
+        method:'post',
+        data:{
+          goodsId:id,
+        },
+        headers:{
+          token:true
+        }
+      }).then(res=>{
+        if(res.success){
+          Toast(res.msg)
+        }
+      })
     }
   },
   created(){

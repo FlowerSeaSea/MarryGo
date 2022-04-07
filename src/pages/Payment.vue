@@ -1,5 +1,8 @@
 <template>
   <div>
+    <Navbar>
+      <div slot="title">支付状态</div>
+    </Navbar>
     <div v-if="payStatus">恭喜您支付成功~</div>
     <div v-else>支付失败</div>
   </div>
@@ -7,8 +10,12 @@
 
 <script>
 import http from "@/common/api/request.js";
+import Navbar from "@/components/Navbar.vue";
 import qs from "qs";
 export default {
+  components: {
+    Navbar,
+  },
   data() {
     return {
       payStatus: false,

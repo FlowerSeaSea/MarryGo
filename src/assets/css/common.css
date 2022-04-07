@@ -5,6 +5,7 @@
 #app {
   width: 100vw;
   overflow: hidden;
+  background: pink;
 }
 .icon {
   width: 2em;
@@ -18,13 +19,13 @@ section,
 footer {
   margin: 0 auto;
   width: 100vw;
-  background: #ff5470;
 }
 header {
   height: 54px;
 }
 section {
-  padding: 15px 10px;
+  height: 100%;
+  padding: 10px 10px;
   border-radius: 20px;
   box-sizing: border-box;
   overflow: hidden;

@@ -1,15 +1,23 @@
 <template>
   <div id="root">
     <header>
-      <navbar></navbar>
+      <navbar>
+        <div slot="title">婚礼用品</div>
+      </navbar>
     </header>
     <section>
       <swiper :autoplay="3000" :imgUrl="this.imgUrl" />
       <div class="contant clearfix">
         <h2>第一栏</h2>
-        <div class="left"></div>
-        <div class="rt_one"></div>
-        <div class="rt_two"></div>
+        <div class="left">
+          <img src="/images/part1.jpg" alt="" />
+        </div>
+        <div class="rt_one">
+          <img src="/images/part2.jpg" alt="" />
+        </div>
+        <div class="rt_two">
+          <img src="/images/part3.jpg" alt="" />
+        </div>
       </div>
       <div class="list">
         <h2>商品</h2>
@@ -52,6 +60,8 @@
 import Navbar from "@/components/Navbar.vue";
 import Swiper from "@/components/Swiper.vue";
 import Tabbar from "@/components/Tabbar.vue";
+import http from "@/common/api/request.js";
+
 export default {
   components: {
     Tabbar,
@@ -60,12 +70,13 @@ export default {
   },
   data() {
     return {
+      goodsList:[],
       imgUrl: [
-        require("@/assets/image/swiper01.png"),
-        require("@/assets/image/swiper02.png"),
-        require("@/assets/image/swiper01.png"),
-        require("@/assets/image/swiper03.png"),
-        require("@/assets/image/swiper04.png"),
+        require("@/assets/image/4.png"),
+        require("@/assets/image/1.jpg"),
+        require("@/assets/image/3.jpg"),
+        require("@/assets/image/6.jpg"),
+        require("@/assets/image/5.jpg"),
       ],
       active: 1,
       list: [],
@@ -74,7 +85,19 @@ export default {
       refreshing: false,
     };
   },
+  created(){
+    this.getData();
+  },
   methods: {
+    getData() {
+      http
+        .$axios({
+          url: "/api/goods",
+        })
+        .then((res) => {
+          this.goodsList = res;
+        });
+    },
     onLoad() {
       setTimeout(() => {
         if (this.refreshing) {
@@ -104,7 +127,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .van-swipe-item {
   position: relative;
   height: 150px;
@@ -120,35 +143,52 @@ export default {
   padding: 15px 0;
   width: 100%;
 }
-.left {
-  float: left;
-  width: 50%;
-  background: red;
-  height: 200px;
-  border-radius: 20px;
-}
-.rt_one {
-  border-radius: 20px;
-  margin-bottom: 10px;
-  float: right;
-  width: 45%;
-  background: blue;
-  height: 100px;
-}
-.rt_two {
-  border-radius: 20px;
-  margin-bottom: 10px;
-  float: right;
-  width: 45%;
-  background: pink;
-  height: 100px;
-}
-.custom-image .van-empty__image {
-  width: 90px;
-  height: 90px;
-}
-.bottom-button {
-  width: 160px;
-  height: 40px;
+section {
+  .left {
+    float: left;
+    width: 50%;
+    background: red;
+    height: 200px;
+    border-radius: 20px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 200px;
+    }
+  }
+  .rt_one {
+    border-radius: 20px;
+    margin-bottom: 10px;
+    float: right;
+    width: 45%;
+    background: blue;
+    height: 100px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100px;
+    }
+  }
+  .rt_two {
+    border-radius: 20px;
+    margin-bottom: 10px;
+    float: right;
+    width: 45%;
+    background: pink;
+    height: 100px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100px;
+    }
+  }
+  ::v-deep .custom-image .van-empty__image {
+    width: 90px;
+    height: 90px;
+  }
+  ::v-deep .bottom-button {
+    width: 160px;
+    height: 40px;
+  }
 }
 </style>

@@ -35,7 +35,7 @@
       <van-notice-bar
         left-icon="volume-o"
         :scrollable="false"
-        mode="link"
+        mode="closeable"
         background="#ecf9ff"
       >
         <van-swipe
@@ -44,9 +44,9 @@
           :autoplay="3000"
           :show-indicators="false"
         >
-          <van-swipe-item>内容 1</van-swipe-item>
-          <van-swipe-item>内容 2</van-swipe-item>
-          <van-swipe-item>内容 3</van-swipe-item>
+          <van-swipe-item @click="goNews">内容 1</van-swipe-item>
+          <van-swipe-item @click="goNews">内容 2</van-swipe-item>
+          <van-swipe-item @click="goNews">内容 3</van-swipe-item>
         </van-swipe>
       </van-notice-bar>
       <van-grid class="first" :border="false" square center>
@@ -115,20 +115,53 @@
           </svg>
         </van-grid-item>
       </van-grid>
+
+      <div>
+        <div class="partOne">
+          <p>
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-hunshalifu"></use>
+          </svg>
+            大家都在买
+            </p>
+          <van-icon name="arrow" @click="goShop" />
+        </div>
+        <ul class="goodList">
+          <li v-for="(item, index) in goodsList" :key="index" class="goods">
+            <img :src="item.imgUrl" />
+            <p class="goodDetail">
+              <span class="van-ellipsis"
+                >【{{ item.name }}】{{ item.content }}</span
+              >
+              <span>￥{{ item.price }}<s>￥1111</s></span>
+              <span>销量{{ item.num }}</span>
+              <van-button
+                round
+                color="red"
+                @click="goDetaile(item.id)"
+                style="width: 80%; height: 20px; font-color: 'white'"
+                ><strong style="color: white">立即购买</strong></van-button
+              >
+            </p>
+          </li>
+        </ul>
+      </div>
     </section>
-    <Tabbar/>
+    <Tabbar />
   </div>
 </template>
 
 <script>
 import { areaList } from "@vant/area-data";
-import Tabbar from '@/components/Tabbar.vue';
+import Tabbar from "@/components/Tabbar.vue";
+import http from "@/common/api/request.js";
 export default {
-  components:{
-    Tabbar
+  components: {
+    Tabbar,
   },
   data() {
     return {
+      goodsList: [],
       areaList,
       code: 0,
       option: [
@@ -181,7 +214,31 @@ export default {
       ],
     };
   },
+  created() {
+    this.getData();
+  },
   methods: {
+    getData() {
+      http
+        .$axios({
+          url: "/api/goods",
+        })
+        .then((res) => {
+          this.goodsList = res;
+        });
+    },
+    goDetaile(id) {
+      this.$router.push({
+        path: "/detaile",
+        name: "shopDetaile",
+        query: {
+          id,
+        },
+        params: {
+          id,
+        },
+      });
+    },
     confirm(value) {
       this.option = value;
       console.log(value);
@@ -194,95 +251,167 @@ export default {
     searchFocus() {
       this.$router.push("/search");
     },
+    goNews() {
+      this.$router.push("/news");
+    },
+    goShop() {
+      this.$router.push("/shop");
+    },
   },
 };
 </script>
 
-<style lang="scss">
-.first {
-  span {
-    font-size: 13px;
-  }
-}
-.second {
-  p {
-    span {
-      display: inline-block;
-      font-size: 15px;
-      font-weight: 500;
-      padding-left: 5px;
-    }
-    span:last-child {
-      font-size: 12px;
-      font-weight: 500;
-      color: orangered;
-    }
-  }
-  .icon3 {
-    width: 2rem;
-    height: 2rem;
-    padding: 5px;
-  }
-}
-.third {
-  p {
-    span {
-      display: inline-block;
-      font-size: 15px;
-      font-weight: 500;
-      padding-left: 19px;   
-    }
-    span:last-child {
-      font-size: 12px;
-      font-weight: 500;
-      color: orangered;
-    }
-  }
-  .icon2 {
-    width: 4rem;
-    height: 4rem;
-  }
-}
+<style lang="scss" scoped>
 .nav {
   position: relative;
-}
-.nav-port {
-  position: absolute;
-  display: flex;
-  left: 0;
-  width: 85%;
-  height: 100%;
-}
-.nav_left {
-  flex: 1;
-  background: rgba(255, 255, 255, 0);
-  padding: 3px;
-}
-.van-dropdown-menu__item {
-  background: #ff5470;
-}
-.van-dropdown-menu__bar {
-  background: rgba(255, 255, 255, 0);
-}
-.van-dropdown-menu__title--active {
-  color: green;
-}
-.nav_title {
-  position: relative;
-  flex: 4;
-}
-.van-search__content {
-  background-color: white;
-}
-.van-dropdown-menu__title::after {
-  border-color: transparent transparent #000000 #000000;
+  .nav-port {
+    position: absolute;
+    display: flex;
+    left: 0;
+    width: 85%;
+    height: 100%;
+    .nav_left {
+      flex: 1;
+      padding: 3px;
+      ::v-deep .van-dropdown-menu__bar {
+        background-color: rgba($color: #000000, $alpha: 0);
+        box-shadow: 0 0px 0px;
+      }
+      ::v-deep .van-dropdown-menu__title::after {
+        border-color: transparent transparent #000000 #000000;
+      }
+    }
+    .nav_title {
+      position: relative;
+      flex: 4;
+      ::v-deep .van-search__content {
+        background-color: white;
+      }
+    }
+  }
+  .nav-right {
+    position: absolute;
+    padding-top: 0.3rem;
+    width: 15%;
+    height: 100%;
+    right: 0;
+  }
 }
 
-.nav-right {
-  position: absolute;
-  padding-top: 0.3rem;
-  width: 15%;
-  height: 100%;
-  right: 0;
+section {
+  .van-notice-bar {
+    margin-bottom: 0.5rem;
+    height: 1.3rem;
+    background-color: rgba($color: #ffffff, $alpha: 0.8) !important;
+    border-radius: 13px;
+  }
+  .notice-swipe {
+    height: 40px;
+    line-height: 40px;
+  }
+  .first,
+  .second,
+  .third {
+    margin-bottom: 0.6rem;
+    border-radius: 0.6rem;
+    overflow: hidden;
+  }
+
+  .first {
+    span {
+      font-size: 13px;
+    }
+  }
+  .second {
+    p {
+      span {
+        display: inline-block;
+        font-size: 15px;
+        font-weight: 500;
+        padding-left: 5px;
+      }
+      span:last-child {
+        font-size: 12px;
+        font-weight: 500;
+        color: orangered;
+      }
+    }
+    .icon3 {
+      width: 2rem;
+      height: 2rem;
+      padding: 5px;
+    }
+  }
+  .third {
+    p {
+      span {
+        display: inline-block;
+        font-size: 15px;
+        font-weight: 500;
+        padding-left: 20px;
+      }
+      span:last-child {
+        font-size: 12px;
+        font-weight: 500;
+        color: orangered;
+      }
+    }
+    .icon2 {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
+  .partOne{
+    padding: 5px;
+    display: flex;
+    color: #291a1a;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-bottom: 1px solid rgb(228, 223, 223);
+    border-radius: 12px 12px 0px 0px;
+    p{
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      .icon{
+        width: 1.5rem;
+      }
+    }
+  }
+  .goodList {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .goods {
+    padding: 5px 0 10px 0;
+    width: 50%;
+    background: white;
+    img {
+      width: 100%;
+      height: 150px;
+    }
+    .goodDetail {
+      margin-top: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-around;
+      span {
+        line-height: 25px;
+        display: block;
+        font-size: 14px;
+        &:nth-child(2) {
+          font-weight: 600;
+          color: rgb(255, 5, 5);
+        }
+        &:last-child {
+          font-size: 10px;
+          color: rgb(168, 5, 5);
+        }
+      }
+    }
+  }
 }
 </style>

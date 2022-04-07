@@ -1,9 +1,14 @@
 <template>
   <div class="cart container">
     <header>
-      <i class="iconfont icon-fanhui" @click="$router.back()"></i>
-      <span>购物车</span>
-      <span @click="isNavBar" v-text="isNavStatus ? '完成' : '编辑'"></span>
+      <navbar>
+        <div slot="title">
+          <span>购物车</span>
+        </div>
+        <div slot="right">
+          <span @click="isNavBar" v-text="isNavStatus ? '完成' : '编辑'"></span>
+        </div>
+      </navbar>
     </header>
     <section v-if="list.length">
       <div class="cart-title">
@@ -11,7 +16,7 @@
           @click="checkedAllFn"
           :value="isCheckedAll"
         ></van-checkbox>
-        <span>商品</span>
+        <span>商品列表</span>
       </div>
       <ul>
         <li v-for="(item, index) in list" :key="index">
@@ -45,38 +50,43 @@
       没有购物车数据
       <router-link to="/home">去首页逛逛吧</router-link>
     </section>
-    <footer v-if="list.length">
-      <div class="radio">
-        <van-checkbox
-          @click="checkedAllFn"
-          :value="isCheckedAll"
-        ></van-checkbox>
+    <footer>
+      <div v-if="isNavStatus">
+        <van-submit-bar block button-text="删除" @submit="delGoodsFn"/>
       </div>
-      <div class="total" v-show="!isNavStatus">
-        <div>
-          共有
-          <span class="total-active">{{ total.num }}</span>
-          件商品
-        </div>
-        <div>
-          <span>总计：</span>
-          <span class="total-active"
-            >¥{{ total.price.toFixed(2) }} + 0茶币</span
-          >
-        </div>
+      <div v-else>
+        <van-submit-bar
+          v-if="list.length"
+          :price="total.price * 100"
+          button-text="提交订单"
+          @submit="goOrder"
+        >
+          <van-checkbox
+            @click="checkedAllFn"
+            :value="isCheckedAll"
+          ></van-checkbox>
+          &nbsp;
+          <div>
+            共
+            <span class="total-active">{{ total.num }}</span>
+            件商品
+          </div>
+        </van-submit-bar>
       </div>
-      <div class="order" v-if="isNavStatus" @click="delGoodsFn">删除</div>
-      <div class="order" v-else @click="goOrder">去结算</div>
     </footer>
   </div>
 </template>
 
 <script>
 import http from "@/common/api/request.js";
+import Navbar from "@/components/Navbar.vue";
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 import { Toast } from "vant";
 export default {
   name: "Cart",
+  components: {
+    Navbar,
+  },
   data() {
     return {
       checked: true,
@@ -141,7 +151,6 @@ export default {
         Toast("请至少选中一件商品");
         return;
       }
-
       let newList = [];
       this.list.forEach((item) => {
         this.selectList.filter((v) => {
@@ -150,7 +159,6 @@ export default {
           }
         });
       });
-
       // 生成订单
       http
         .$axios({
@@ -173,7 +181,7 @@ export default {
             path: "/order",
             query: {
               detail: JSON.stringify(this.selectList),
-              goodsList: JSON.stringify(this.goodsList)
+              goodsList: JSON.stringify(this.goodsList),
             },
           });
         });
@@ -182,31 +190,16 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 1.173333rem;
-  color: #fff;
-  background-color: #b0352f;
-  i {
-    padding: 0 0.4rem;
-    font-size: 0.586666rem;
-  }
-  span {
-    padding: 0 0.4rem;
-    font-size: 0.426666rem;
-  }
-}
 section {
-  background-color: #f5f5f5;
   .cart-title {
+    background-color: #f5f5f5;
     display: flex;
     padding: 0.533333rem;
+
     span {
-      padding: 0 0.4rem;
-      font-weight: 500;
-      font-size: 0.48rem;
+      padding: 0.3rem;
+      font-weight: 600;
+      font-size: 1rem;
     }
   }
   ul {
@@ -216,8 +209,8 @@ section {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.16rem 0.533333rem;
-      margin: 0.213333rem 0;
+      padding: 0.5rem;
+      margin-bottom: 00.23rem;
       background-color: #fff;
       .check {
         padding-right: 0.373333rem;
@@ -225,52 +218,29 @@ section {
       .goods {
         display: flex;
         flex-direction: column;
-        padding-left: 0.4rem;
-        font-size: 0.32rem;
+        font-size: 0.5rem;
         .goods-title {
+          font-size: 13px;
+          margin: 0.2rem;
           display: flex;
-          i {
-            font-size: 0.586666rem;
-          }
+          justify-content: space-between;
         }
         .goods-price {
-          padding: 0.08rem 0;
+          font-weight: 600;
+          margin: 0.2rem 0 0.2rem 0.2rem;
           color: #b0352f;
         }
         ::v-deep .van-stepper {
           text-align: right;
+          margin: 0.2rem 0;
         }
       }
       img {
-        width: 1.973333rem;
-        height: 1.973333rem;
+        width: 5rem;
+        height: 5rem;
       }
     }
   }
 }
-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 1.28rem;
-  border-top: 0.053333rem solid #ccc;
-  .radio {
-    padding: 0 0.4rem;
-  }
-  .total {
-    flex: 1;
-    font-size: 0.32rem;
-    .total-active {
-      color: #b0352f;
-    }
-  }
-  .order {
-    width: 3.2rem;
-    line-height: 1.28rem;
-    color: #fff;
-    text-align: center;
-    font-size: 0.426666rem;
-    background-color: #b0352f;
-  }
-}
+
 </style>

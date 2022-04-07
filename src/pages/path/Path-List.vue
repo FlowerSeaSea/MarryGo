@@ -1,9 +1,13 @@
 <template>
   <div class="path-index container">
-    <Header>
-      <span v-if="pathStatus">编辑地址</span>
-      <span v-else>添加地址</span>
-    </Header>
+    <header>
+      <Navbar>
+        <div slot="title">
+          <span v-if="pathStatus">编辑地址</span>
+          <span v-else>添加地址</span>
+        </div>
+      </Navbar>
+    </header>
     <section>
       <van-address-edit
         v-if="pathStatus"
@@ -27,8 +31,8 @@
 
 <script>
 import { Toast } from "vant";
+import Navbar from "@/components/Navbar.vue";
 import { areaList } from "@vant/area-data";
-import Header from "@/components/path/Header.vue";
 import http from "@/common/api/request.js";
 export default {
   data() {
@@ -39,7 +43,7 @@ export default {
     };
   },
   components: {
-    Header,
+    Navbar,
   },
   created() {
     if (this.$route.params.key) {

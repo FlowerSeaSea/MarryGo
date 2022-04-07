@@ -1,22 +1,24 @@
 <template>
   <div>
     <header>
-      <navbar>
+      <navbar> 
+        <div slot="title">个人中心</div>
       </navbar>
     </header>
     <section>
       <div class="head" v-if="loginStatus">
-        <div class="head-left"></div>
+        <div class="head-left" v-html="avatarSVG"></div>
         <div class="head-right">
           <p>{{ userInfo.nickName }}</p>
           <p>time{{ loginStatus }}</p>
           <p>
-            <span>fabu</span>
-            <span>guanzhu</span>
+            <span>发布</span>
+            <span>关注</span>
           </p>
         </div>
       </div>
-      <van-skeleton v-else title avatar avatar-size="70px" to="/login"/>
+      <van-skeleton v-else title avatar avatar-size="70px" to="/login" />
+
       <div class="card">
         <div class="card-left"></div>
         <div class="card-left"></div>
@@ -50,8 +52,28 @@
           <span>选定婚期</span>
         </div>
       </div>
-      <p v-if="loginStatus" @click="loginOut">退出登录{{ loginStatus }}</p>
+      <div class="list" v-if="loginStatus">
+        <ul>
+          <li>
+            <p  @click="loginOut">我的信息</p>
+            <div class="van-hairline--bottom"></div>
+          </li>
+          <li>
+            <p  @click="loginOut">关于我们</p>
+            <div class="van-hairline--bottom"></div>
+          </li>
+          <li>
+            <p  @click="loginOut">设置</p>
+            <div class="van-hairline--bottom"></div>
+          </li>
+          <li>
+            <p @click="loginOut">退出登录</p>
+            <div class="van-hairline--bottom"></div>
+          </li>
+        </ul> 
+      </div>
     </section>
+    <footer></footer>
     <Tabbar />
   </div>
 </template>
@@ -60,10 +82,16 @@
 import Navbar from "../components/Navbar.vue";
 import { mapState, mapMutations } from "vuex";
 import Tabbar from "@/components/Tabbar.vue";
+import { getRandomAvatarConfig, generateNotionAvatar } from "@/common/tools";
 export default {
   components: {
     Tabbar,
     Navbar,
+  },
+  data() {
+    return {
+      avatarSVG: "",
+    };
   },
   computed: {
     ...mapState({
@@ -76,6 +104,12 @@ export default {
     ...mapMutations(["loginOut"]),
     goProgress() {},
   },
+  async mounted() {
+    const config = getRandomAvatarConfig();
+    //const ff = [1, 9, 3, 9, 9, 9, 9, 9, 9, 9]
+    this.avatarSVG = await generateNotionAvatar(config);
+    console.log(config);
+  },
 };
 </script>
 
@@ -86,7 +120,7 @@ export default {
   .head-left {
     width: 100px;
     height: 50px;
-    background: yellow;
+    // background: yellow;
   }
 }
 .card {
@@ -95,14 +129,24 @@ export default {
   .card-left {
     width: 50%;
     height: 50px;
-    background: gold;
+    // background: gold;
   }
 }
 .util {
   width: 100%;
+  margin: 15px 0;
+}
+.list{
+  padding: 10px;
+  border-radius: 13px;
+  background: white;
+  li{
+    margin: 5px 0;
+  }
 }
 .progress {
   padding: 10px;
+  margin: 15px 0;
   border-radius: 13px;
   background: blueviolet;
   .progress-title {

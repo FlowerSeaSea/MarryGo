@@ -7,6 +7,8 @@ import user from "./modules/user.js"
 import cart from './modules/cart.js'
 import path from './modules/path.js'
 import order from './modules/order.js'
+import merChant from './modules/merChant.js'
+import buy from './modules/buy.js'
 
 export default new Vuex.Store({
     // 挂载
@@ -14,6 +16,8 @@ export default new Vuex.Store({
         user,
         cart,
         path,
-        order
+        order,
+        merChant,
+        buy
     }
 })

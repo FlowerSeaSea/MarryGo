@@ -1,6 +1,12 @@
 <template>
   <div class="path-index container">
-    <Header></Header>
+    <header>
+        <Navbar>
+        <div slot="title">
+          <span>地址管理</span>
+        </div>
+      </Navbar>
+    </header>
     <section>
       <van-address-list
         v-if="list.length"
@@ -26,13 +32,13 @@
 
 <script>
 import http from "@/common/api/request.js";
+import Navbar from "@/components/Navbar.vue";
 // import { Toast } from "vant";
-import Header from "@/components/path/Header.vue";
 import { mapState, mapMutations } from "vuex";
 import bus from '@/common/bus.js'
 export default {
   components: {
-    Header,
+    Navbar
   },
   data() {
     return {

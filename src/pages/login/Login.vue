@@ -1,7 +1,9 @@
 <template>
   <div class="parent">
     <header>
-      <navbar />
+      <navbar>
+        <div slot="title">登录</div>
+      </navbar>
     </header>
     <section>
       <van-form @submit="onSubmit" @failed="onFailed">

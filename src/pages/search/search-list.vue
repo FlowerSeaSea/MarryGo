@@ -119,7 +119,7 @@ export default {
             content: "asdajsna",
             price: 111,
             num: 2,
-            imgUrl: "/images/goods1.png",
+            imgUrl: "/images/1.jpg",
           });
           this.refreshing = false;
         }

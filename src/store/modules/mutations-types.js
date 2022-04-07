@@ -11,3 +11,7 @@ export const CHECK_ITEM = 'checkItem';
 export const INIT_DATA = 'initData';
 // 订单
 export const INIT_ORDER = 'initOrder';
+// 商家
+export const INIT_MERCHANT  = 'initMerChant';
+
+export const BUY_LIST  = 'buyList';

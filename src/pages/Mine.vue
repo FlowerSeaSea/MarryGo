@@ -1,28 +1,48 @@
 <template>
   <div>
     <header>
-      <navbar> 
+      <navbar>
         <div slot="title">个人中心</div>
       </navbar>
     </header>
     <section>
       <div class="head" v-if="loginStatus">
-        <div class="head-left" v-html="avatarSVG"></div>
+        <div class="head-left" @click="changHead" v-if="userInfo.imgUrl == ''">
+          设置头像
+        </div>
+        <div
+          class="head-left"
+          @click="changHead"
+          v-html="avatarSVG"
+          v-else
+        ></div>
+
         <div class="head-right">
-          <p>{{ userInfo.nickName }}</p>
-          <p>time{{ loginStatus }}</p>
-          <p>
-            <span>发布</span>
-            <span>关注</span>
-          </p>
+          <h4 v-if="userInfo.nickName!='' " @click="setName">{{ userInfo.nickName }}</h4>
+          <h4 @click="setName" v-else>设置昵称</h4>
+          <van-dialog v-model="show" title="标题" show-cancel-button @confirm="confirm" @cancel="setName">
+            <van-field
+              v-model="value"
+              label="昵称"
+              placeholder="请输入昵称"
+              @blur="blur(value)"
+            />
+          </van-dialog>
+          <!-- {{ loginStatus }} -->
+          <p class="head-right_font">婚礼倒计时666天</p>
+          <h5>
+            <span>0发布 </span>
+            <span>|</span>
+            <span> 0关注</span>
+          </h5>
         </div>
       </div>
       <van-skeleton v-else title avatar avatar-size="70px" to="/login" />
 
-      <div class="card">
+      <!-- <div class="card">
         <div class="card-left"></div>
         <div class="card-left"></div>
-      </div>
+      </div> -->
       <div class="util">
         <van-grid>
           <van-grid-item icon="star-o" text="收藏" />
@@ -55,22 +75,22 @@
       <div class="list" v-if="loginStatus">
         <ul>
           <li>
-            <p  @click="loginOut">我的信息</p>
+            <p @click="loginOut">我的信息</p>
             <div class="van-hairline--bottom"></div>
           </li>
           <li>
-            <p  @click="loginOut">关于我们</p>
+            <p @click="loginOut">关于我们</p>
             <div class="van-hairline--bottom"></div>
           </li>
           <li>
-            <p  @click="loginOut">设置</p>
+            <p @click="loginOut">设置</p>
             <div class="van-hairline--bottom"></div>
           </li>
           <li>
             <p @click="loginOut">退出登录</p>
             <div class="van-hairline--bottom"></div>
           </li>
-        </ul> 
+        </ul>
       </div>
     </section>
     <footer></footer>
@@ -81,8 +101,10 @@
 <script>
 import Navbar from "../components/Navbar.vue";
 import { mapState, mapMutations } from "vuex";
+import { generateNotionAvatar } from "@/common/tools";
 import Tabbar from "@/components/Tabbar.vue";
-import { getRandomAvatarConfig, generateNotionAvatar } from "@/common/tools";
+import http from "@/common/api/request.js";
+import { Toast } from "vant";
 export default {
   components: {
     Tabbar,
@@ -91,6 +113,8 @@ export default {
   data() {
     return {
       avatarSVG: "",
+      show: false,
+      value: "",
     };
   },
   computed: {
@@ -99,28 +123,78 @@ export default {
       userInfo: (state) => state.user.userInfo,
     }),
   },
+  created() {
+  },
   activated() {},
   methods: {
-    ...mapMutations(["loginOut"]),
+    ...mapMutations(["loginOut",'userLogin']),
     goProgress() {},
+    changHead() {
+      this.$router.push("head-portrait");
+    },
+    blur(val) {
+      if (!this.value) {
+        Toast({
+          message: "不能为空",
+          position: "top",
+        });
+        return;
+      }
+      this.value = val;
+    },
+
+    confirm(){
+      this.show = !this.show;
+      http.$axios({
+          method: "post",
+          url: "/api/updataNickName",
+          data: {
+            nickName: this.value,
+          },
+          headers: {
+            token: true,
+          }
+        }).then((res) => {  
+          Toast(res.msg);
+          this.userLogin(res.data)
+        });
+    },
+    setName() {
+      this.show = !this.show;
+    },
   },
   async mounted() {
-    const config = getRandomAvatarConfig();
-    //const ff = [1, 9, 3, 9, 9, 9, 9, 9, 9, 9]
+    let config = this.userInfo.imgUrl.split(",").map((v) => {
+      return v / 1;
+    });
     this.avatarSVG = await generateNotionAvatar(config);
-    console.log(config);
-  },
+    if (this.$route.params.config != undefined) {
+      config = this.$route.params.config;
+      this.avatarSVG = await generateNotionAvatar(config);
+    }
+  }
 };
 </script>
 
 <style scoped lang="scss">
 .head {
+  padding: 0 5px;
   display: flex;
   align-items: center;
   .head-left {
-    width: 100px;
-    height: 50px;
-    // background: yellow;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 10px;
+    text-align: center;
+    line-height: 70px;
+    background: pink;
+  }
+  .head-right {
+    margin-left: 10px;
+  }
+  .head-right_font {
+    font-size: 10px;
   }
 }
 .card {
@@ -136,11 +210,11 @@ export default {
   width: 100%;
   margin: 15px 0;
 }
-.list{
+.list {
   padding: 10px;
   border-radius: 13px;
   background: white;
-  li{
+  li {
     margin: 5px 0;
   }
 }

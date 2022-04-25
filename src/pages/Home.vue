@@ -98,7 +98,7 @@
         <van-grid-item to="/search">
           <p>
             <span>问大家</span>
-            <span>问大家sada</span>
+            <span>问大家</span>
           </p>
           <svg class="icon2" aria-hidden="true">
             <use xlink:href="#icon-yihuo"></use>

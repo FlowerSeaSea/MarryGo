@@ -14,7 +14,7 @@
           </li>
         </ul>
       </div>
-      <div v-else>z暂无数据</div>
+      <div v-else>暂无数据</div>
     </section>
   </div>
 </template>

@@ -47,6 +47,16 @@
           @click-right-icon="passwordStatus = !passwordStatus"
           :rules="[{ required: true, message: '密码不能为空' }]"
         />
+
+        <van-field
+          v-model="childValue.nickName"
+          clearable
+          type="text"
+          name="nickName"
+          label="昵称"
+          placeholder="请设置昵称"
+          :rules="[{ required: true, message: '昵称不能为空' }]"
+        />
         <div style="margin: 16px">
           <van-button round block type="info" native-type="submit"
             >注册</van-button
@@ -73,6 +83,7 @@ export default {
         userTel: "",
         sms: "",
         userPwd: "",
+        nickName:""
       },
       rules: {
         userTel: {
@@ -139,6 +150,7 @@ export default {
           data: {
             phone: this.childValue.userTel,
             pwd: this.childValue.userPwd,
+            nickName: this.childValue.nickName,
           },
         })
         .then((res) => {

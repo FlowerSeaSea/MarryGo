@@ -18,6 +18,13 @@ module.exports = {
           "^api": "/api",
         },
       },
+      "/laohuangli": {
+        target: "http://v.juhe.cn",
+        changeOrigin: true,
+        pathRewrite: {
+          "^laohuangli": "/laohuangli",
+        },
+      },
     },
   },
   chainWebpack: (config) => {

@@ -10,8 +10,10 @@
         <van-tab title="新晋小生">
           <ul class="messageList">
             <li v-for="(i, index) in list" :key="index">
-              <img :src="i.img_url" />
-              <!-- <div class="headSvg" v-html="v.avatarSVG"></div> -->
+
+              <!-- 在此处渲染头像 -->
+              <div class="headSvg" v-html="i.svg"></div>
+
               <div class="messageList_c">
                 <h4>{{ i.name }}</h4>
                 <div class="van-multi-ellipsis--l2">
@@ -96,23 +98,17 @@ export default {
   },
 
   created() {
-    this.getData();
-  },
-
-  mounted() {
-    setTimeout(() => {
-      this.list.forEach((v) => {
-        v.svg = generateNotionAvatar(v.config)
-      });
-        console.log(this.list);
-    }, 1000);
+   this.getData();
   },
 
   methods: {
+    // 异步渲染成svg，此方法行不通
     async change(config) {
       const avatarSVG = await generateNotionAvatar(config);
       return avatarSVG;
     },
+
+    // 获取用户信息方法，在this.list中存放，其中每个对象中的config属性即为用户的头像数组
     getData() {
       http
         .$axios({
@@ -129,11 +125,12 @@ export default {
             v.config = v.img_url.split(",").map((v) => {
               return v / 1;
             });
+            v.svg=this.change(v.config)
           });
-
-          console.log(this.list);
+          console.log(this.list); //用户数据
         });
 
+// this.list1同上
       http
         .$axios({
           url: "/api/selectMessage/title",
@@ -148,12 +145,7 @@ export default {
             v.startShow = true;
           });
         });
-      // //freeze 冻结对象性能好一些(冻结指的是不能向这个对象添加新的属性，不能修改其已有属性的值，不能删除已有属性，以及不能修改该对象已有属性的可枚举性、可配置性、可写性。该方法返回被冻结的对象。)
-      // this.list = Object.freeze(res);
-      // // 当dom更新完在加载
-      // this.$nextTick(() => {
-      //   console.log(res);
-      // });
+
     },
 
     onClick(name, title) {

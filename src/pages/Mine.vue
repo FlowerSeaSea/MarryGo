@@ -18,9 +18,17 @@
         ></div>
 
         <div class="head-right">
-          <h4 v-if="userInfo.nickName!='' " @click="setName">{{ userInfo.nickName }}</h4>
+          <h4 v-if="userInfo.nickName != ''" @click="setName">
+            {{ userInfo.nickName }}
+          </h4>
           <h4 @click="setName" v-else>设置昵称</h4>
-          <van-dialog v-model="show" title="标题" show-cancel-button @confirm="confirm" @cancel="setName">
+          <van-dialog
+            v-model="show"
+            title="标题"
+            show-cancel-button
+            @confirm="confirm"
+            @cancel="setName"
+          >
             <van-field
               v-model="value"
               label="昵称"
@@ -29,7 +37,12 @@
             />
           </van-dialog>
           <!-- {{ loginStatus }} -->
-          <p class="head-right_font">婚礼倒计时666天</p>
+          <p class="head-right_font" v-if="parseInt(Gap/(24*60*60))>0">
+            婚礼倒计时{{parseInt(Gap/(24*60*60))}}天<van-icon name="edit" @click="toCalendar" />
+          </p>
+          <p v-else class="head-right_font">
+            婚礼正在进行时... 
+          </p>
           <h5>
             <span>0发布 </span>
             <span>|</span>
@@ -58,9 +71,9 @@
         </div>
         <div class="progress-value">
           <van-progress
-            :percentage="75"
+            :percentage="100-(userInfo.progress.split(',').length)*(100/21)"
             stroke-width="7"
-            pivot-text="紫色"
+            :pivot-text="Math.floor(100-(userInfo.progress.split(',').length)*(100/21))+'%'"
             pivot-color="#7232dd"
             color="linear-gradient(to right, #be99ff, #7232dd)"
           />
@@ -69,7 +82,7 @@
           <van-tag mark type="primary" color="#ffe1e1" text-color="#ad0000"
             >未完成</van-tag
           >
-          <span>选定婚期</span>
+          <span>{{ userInfo.progress.split(',')[0]}}</span>
         </div>
       </div>
       <div class="list" v-if="loginStatus">
@@ -115,6 +128,7 @@ export default {
       avatarSVG: "",
       show: false,
       value: "",
+      Gap:''
     };
   },
   computed: {
@@ -124,11 +138,21 @@ export default {
     }),
   },
   created() {
+    this.getData()
   },
   activated() {},
   methods: {
-    ...mapMutations(["loginOut",'userLogin']),
-    goProgress() {},
+    ...mapMutations(["loginOut", "userLogin"]),
+    getData() {
+        let userInfo = JSON.parse(localStorage.getItem("userInfo")),
+        WeddingDay = new Date(userInfo.calendar),
+        time = new Date()
+        console.log(WeddingDay.getDate());
+        this.Gap = (WeddingDay - time)/1000
+    },
+    goProgress() {
+      this.$router.push("/progress-page");
+    },
     changHead() {
       this.$router.push("head-portrait");
     },
@@ -143,9 +167,10 @@ export default {
       this.value = val;
     },
 
-    confirm(){
+    confirm() {
       this.show = !this.show;
-      http.$axios({
+      http
+        .$axios({
           method: "post",
           url: "/api/updataNickName",
           data: {
@@ -153,14 +178,18 @@ export default {
           },
           headers: {
             token: true,
-          }
-        }).then((res) => {  
+          },
+        })
+        .then((res) => {
           Toast(res.msg);
-          this.userLogin(res.data)
+          this.userLogin(res.data);
         });
     },
     setName() {
       this.show = !this.show;
+    },
+    toCalendar() {
+      this.$router.push("calendar");
     },
   },
   async mounted() {
@@ -172,7 +201,7 @@ export default {
       config = this.$route.params.config;
       this.avatarSVG = await generateNotionAvatar(config);
     }
-  }
+  },
 };
 </script>
 

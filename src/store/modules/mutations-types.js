@@ -15,3 +15,5 @@ export const INIT_ORDER = 'initOrder';
 export const INIT_MERCHANT  = 'initMerChant';
 
 export const BUY_LIST  = 'buyList';
+
+export const CHANGE_TABLIST  = 'changeTabList';

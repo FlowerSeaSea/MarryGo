@@ -73,7 +73,7 @@
             <span>商家入驻</span>
           </p>
         </van-grid-item>
-        <van-grid-item to="/search">
+        <van-grid-item to="/invitation">
           <svg class="icon icon3" aria-hidden="true">
             <use xlink:href="#icon-dianziqingtie"></use>
           </svg>
@@ -82,7 +82,7 @@
             <span>电子请帖</span>
           </p>
         </van-grid-item>
-        <van-grid-item to="/search">
+        <van-grid-item to="/calendar">
           <svg class="icon icon3" aria-hidden="true">
             <use xlink:href="#icon-huangdaojiri"></use>
           </svg>

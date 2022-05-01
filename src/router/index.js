@@ -57,6 +57,21 @@ const routes = [
     component: () => import("@/pages/HeadPortrait.vue"),
   },
   {
+    path: "/progress-page",
+    name: "progress-page",
+    component: () => import("@/pages/ProgressPage.vue"),
+  },
+  {
+    path: "/calendar",
+    name: "calendar",
+    component: () => import("@/pages/Calendar.vue"),
+  },
+  {
+    path: "/invitation",
+    name: "invitation",
+    component: () => import("@/pages/Invitation.vue"),
+  },
+  {
     path: "/news",
     name: "News",
     component: () => import("@/pages/News.vue"),

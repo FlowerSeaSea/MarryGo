@@ -16,7 +16,6 @@
           v-html="avatarSVG"
           v-else
         ></div>
-
         <div class="head-right">
           <h4 v-if="userInfo.nickName != ''" @click="setName">
             {{ userInfo.nickName }}
@@ -50,42 +49,66 @@
           </h5>
         </div>
       </div>
-      <van-skeleton v-else title avatar avatar-size="70px" to="/login" />
-
-      <!-- <div class="card">
-        <div class="card-left"></div>
-        <div class="card-left"></div>
-      </div> -->
-      <div class="util">
-        <van-grid>
-          <van-grid-item icon="star-o" text="收藏" />
-          <van-grid-item icon="photo-o" text="地址管理" to="/path" />
-          <van-grid-item icon="paid" text="卡卷钱包" />
-          <van-grid-item icon="cart-o" text="购物车" to="/cart" />
-        </van-grid>
-      </div>
-      <div class="progress">
-        <div class="progress-title">
-          <h3>我的备婚进度</h3>
-          <van-icon name="arrow" @click="goProgress" />
+        <!-- <div class="card">
+          <div class="card-left"></div>
+          <div class="card-left"></div>
+        </div> -->
+        <div v-else>
+          <van-skeleton  title avatar avatar-size="70px" :row="2" />
+          <h5 @click="toLogin" style="width:100%;padding:5px;text-align:center;">去登录</h5>
         </div>
-        <div class="progress-value">
-          <van-progress
-            :percentage="100-(userInfo.progress.split(',').length)*(100/21)"
-            stroke-width="7"
-            :pivot-text="Math.floor(100-(userInfo.progress.split(',').length)*(100/21))+'%'"
-            pivot-color="#7232dd"
-            color="linear-gradient(to right, #be99ff, #7232dd)"
-          />
+        <div class="util">
+          <van-grid>
+            <van-grid-item icon="star-o" text="收藏" />
+            <van-grid-item icon="photo-o" text="地址管理" to="/path" />
+            <van-grid-item icon="paid" text="卡卷钱包" />
+            <van-grid-item icon="cart-o" text="购物车" to="/cart" />
+          </van-grid>
         </div>
-        <div class="progress-button">
-          <van-tag mark type="primary" color="#ffe1e1" text-color="#ad0000"
-            >未完成</van-tag
-          >
-          <span>{{ userInfo.progress.split(',')[0]}}</span>
+        <div class="progress" v-if="loginStatus">
+          <div class="progress-title">
+            <h3>我的备婚进度</h3>
+            <van-icon name="arrow" @click="goProgress" />
+          </div>
+          <div class="progress-value">
+            <van-progress
+              :percentage="100-(userInfo.progress.split(',').length)*(100/21)"
+              stroke-width="7"
+              :pivot-text="Math.floor(100-(userInfo.progress.split(',').length)*(100/21))+'%'"
+              pivot-color="#7232dd"
+              color="linear-gradient(to right, #be99ff, #7232dd)"
+            />
+          </div>
+          <div class="progress-button">
+            <van-tag mark type="primary" color="#ffe1e1" text-color="#ad0000"
+              >未完成</van-tag
+            >
+            <span>{{ userInfo.progress.split(',')[0]}}</span>
+          </div>
         </div>
-      </div>
-      <div class="list" v-if="loginStatus">
+        <div class="progress" v-else>
+          <div class="progress-title">
+            <h3>我的备婚进度</h3>
+            <van-icon name="arrow" @click="goProgress" />
+          </div>
+          <div class="progress-value">
+            <van-progress
+              percentage='0'
+              stroke-width="7"
+              pivot-text="0%"
+              pivot-color="#7232dd"
+              color="linear-gradient(to right, #be99ff, #7232dd)"
+            />
+          </div>
+          <div class="progress-button">
+            <van-tag mark type="primary" color="#ffe1e1" text-color="#ad0000"
+              >未完成</van-tag
+            >
+            <span>未登录</span>
+          </div>
+        </div>
+      
+      <div class="list" >
         <ul>
           <li>
             <p @click="loginOut">我的信息</p>
@@ -100,13 +123,13 @@
             <div class="van-hairline--bottom"></div>
           </li>
           <li>
-            <p @click="loginOut">退出登录</p>
+            <p @click="loginOut" v-if="loginStatus">退出登录</p>
             <div class="van-hairline--bottom"></div>
           </li>
         </ul>
       </div>
+
     </section>
-    <footer></footer>
     <Tabbar />
   </div>
 </template>
@@ -128,7 +151,7 @@ export default {
       avatarSVG: "",
       show: false,
       value: "",
-      Gap:''
+      Gap:'',
     };
   },
   computed: {
@@ -143,13 +166,20 @@ export default {
   activated() {},
   methods: {
     ...mapMutations(["loginOut", "userLogin"]),
-    getData() {
-        let userInfo = JSON.parse(localStorage.getItem("userInfo")),
-        WeddingDay = new Date(userInfo.calendar),
-        time = new Date()
-        console.log(WeddingDay.getDate());
-        this.Gap = (WeddingDay - time)/1000
+    toLogin(){
+      this.$router.push("login")
     },
+    getData() {
+      if(this.loginStatus){
+        let userInfo = JSON.parse(localStorage.getItem("userInfo")),
+          WeddingDay = new Date(userInfo.calendar),
+          time = new Date()
+  
+          console.log(WeddingDay.getDate());
+          this.Gap = (WeddingDay - time)/1000
+      } 
+    },
+
     goProgress() {
       this.$router.push("/progress-page");
     },
@@ -193,15 +223,18 @@ export default {
     },
   },
   async mounted() {
-    let config = this.userInfo.imgUrl.split(",").map((v) => {
-      return v / 1;
-    });
-    this.avatarSVG = await generateNotionAvatar(config);
-    if (this.$route.params.config != undefined) {
-      config = this.$route.params.config;
+    if(this.loginStatus){
+      let config = this.userInfo.imgUrl.split(",").map((v) => {
+        return v / 1;
+      });
       this.avatarSVG = await generateNotionAvatar(config);
+      if (this.$route.params.config != undefined) {
+        config = this.$route.params.config;
+        this.avatarSVG = await generateNotionAvatar(config);
+      }
     }
   },
+
 };
 </script>
 

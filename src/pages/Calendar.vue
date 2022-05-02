@@ -89,10 +89,15 @@ export default {
   methods: {
     ...mapMutations(["userLogin"]),
     getData() {
-      let userInfo = JSON.parse(localStorage.getItem("userInfo")),
-        nowData = new Date(userInfo.calendar);
-      this.fomatData(nowData);
+      if(localStorage.getItem("userInfo")==null){
+        this.$router.push('Login')
+      }else{
+        let userInfo = JSON.parse(localStorage.getItem("userInfo")),
+          nowData = new Date(userInfo.calendar);
+        this.fomatData(nowData);
+      }
     },
+
 
     onConfirm(date) {
       Dialog.confirm({

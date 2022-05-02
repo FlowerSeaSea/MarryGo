@@ -110,6 +110,7 @@ export default {
   },
   methods: {
     ...mapMutations(["userLogin","changeTabList"]),
+
     isRadio(list,index,index1) {
       this.mytabList[index].data[index1].isFinish=true
       if(this.progressData.indexOf(list.text)!= -1){
@@ -117,33 +118,38 @@ export default {
       }
       this.changeTabList(this.mytabList)
     },
-    getData() {
-      let userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      if (userInfo.progress == "") {
-        this.mytabList.forEach((v) => {
-          v.data.forEach((e) => {
-            this.progressData.push(e.text);
-          });
-        });
-        http
-        .$axios({
-          method: "post",
-          url: "/api/updataProgress",
-          data: {
-            progress: this.progressData,
-          },
-          headers: {
-            token: true,
-          },
-        })
-        .then((res) => {
-          this.userLogin(res.data);
-        });
-      }else{
-        this.progressData = userInfo.progress.split(",");
-      }
 
+    getData() {
+      if(localStorage.getItem("userInfo")==null){
+        this.$router.push('Login')
+      }else{
+        let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        if (userInfo.progress == "") {
+          this.mytabList.forEach((v) => {
+            v.data.forEach((e) => {
+              this.progressData.push(e.text);
+            });
+          });
+          http
+          .$axios({
+            method: "post",
+            url: "/api/updataProgress",
+            data: {
+              progress: this.progressData,
+            },
+            headers: {
+              token: true,
+            },
+          })
+          .then((res) => {
+            this.userLogin(res.data);
+          });
+        }else{
+          this.progressData = userInfo.progress.split(",");
+        }
+      }
     },
+    
     Confirm() {
       http
         .$axios({

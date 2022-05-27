@@ -2,7 +2,7 @@
   <div>
     <header>
       <navbar>
-        <div slot="title">备婚进度</div>
+        <div slot="title">黄道吉日</div>
       </navbar>
     </header>
     <section>

@@ -10,7 +10,6 @@
         <van-tab title="新晋小生">
           <ul class="messageList">
             <li v-for="(i, index) in list" :key="index">
-
               <!-- 在此处渲染头像 -->
               <div class="headSvg" v-html="i.svg"></div>
 
@@ -43,7 +42,7 @@
         <van-tab title="扫地僧">
           <ul class="messageList">
             <li v-for="(i, index) in list1" :key="index">
-              <img :src="i.img_url" />
+              <div class="headSvg" v-html="i.svg"></div>
 
               <div class="messageList_c">
                 <h4>{{ i.name }}</h4>
@@ -98,7 +97,7 @@ export default {
   },
 
   created() {
-   this.getData();
+    this.getData();
   },
 
   methods: {
@@ -120,17 +119,16 @@ export default {
         })
         .then((res) => {
           this.list = res;
-          this.list.forEach((v) => {
+          this.list.forEach(async (v) => {
             v.startShow = true;
             v.config = v.img_url.split(",").map((v) => {
               return v / 1;
             });
-            v.svg=this.change(v.config)
+            v.svg = await this.change(v.config);
           });
-          console.log(this.list); //用户数据
         });
 
-// this.list1同上
+      // this.list1同上
       http
         .$axios({
           url: "/api/selectMessage/title",
@@ -141,8 +139,12 @@ export default {
         })
         .then((res) => {
           this.list1 = res;
-          this.list1.forEach((v) => {
+          this.list1.forEach(async (v) => {
             v.startShow = true;
+            v.config = v.img_url.split(",").map((v) => {
+              return v / 1;
+            });
+            v.svg = await this.change(v.config);
           });
         });
 
@@ -150,6 +152,7 @@ export default {
 
     onClick(name, title) {
       console.log(name, title);
+      this.$forceUpdate();
     },
 
     addStar(uid, id, i) {
@@ -226,6 +229,7 @@ export default {
 <style scoped lang="scss">
 section {
   .messageList {
+    margin: 10px 0;
     li {
       padding: 5px;
       box-sizing: border-box;
@@ -233,10 +237,10 @@ section {
       border-bottom: 1px solid rgb(193, 191, 191);
       flex-direction: row;
       align-items: center;
-      height: 6rem;
-      img {
+      .headSvg {
         width: 3rem;
         height: 3rem;
+        border: solid 1px black;
         border-radius: 50%;
         overflow: hidden;
       }
@@ -248,6 +252,7 @@ section {
         }
         div {
           width: 16rem;
+          font-size: 13px;
         }
         .messageList_b {
           font-size: 12px;
